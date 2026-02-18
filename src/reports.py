@@ -34,11 +34,22 @@ CATEGORY_MAP = {
     'health': {'en': 'Health', 'ar': 'صحة/طب'},
     'entertainment': {'en': 'Entertainment', 'ar': 'ترفيه'},
     'shopping': {'en': 'Shopping', 'ar': 'تسوق'},
+    'fuel': {'en': 'Fuel', 'ar': 'وقود'},
+    'rent': {'en': 'Rent', 'ar': 'إيجار'},
     'income': {'en': 'Income', 'ar': 'دخل'},
     'expense': {'en': 'Expense', 'ar': 'مصروف'}
 }
 
+HEADER_MAP = {
+    'Type': {'en': 'Type', 'ar': 'النوع'},
+    'Category': {'en': 'Category', 'ar': 'الفئة'},
+    'Amount': {'en': 'Amount', 'ar': 'المبلغ'},
+    'Description': {'en': 'Description', 'ar': 'الوصف'},
+    'Date': {'en': 'Date', 'ar': 'التاريخ'}
+}
+
 def translate(key, lang='en'):
+    if not key: return key
     key_lower = key.lower()
     if key_lower in CATEGORY_MAP:
         return CATEGORY_MAP[key_lower].get(lang, key)
@@ -74,9 +85,22 @@ def generate_summary_text(df, lang='en'):
                 f"📂 *تصنيف المصاريف:*\n{cat_text}")
     return text
 
-def export_to_excel(df):
+def export_to_excel(df, lang='en'):
+    if df.empty:
+        return None
+        
+    # Create a copy for translation
+    pdf = df.copy()
+    
+    # Translate values
+    pdf['Type'] = pdf['Type'].apply(lambda x: translate(x, lang))
+    pdf['Category'] = pdf['Category'].apply(lambda x: translate(x, lang))
+    
+    # Translate headers
+    pdf.columns = [HEADER_MAP.get(c, {}).get(lang, c) for c in pdf.columns]
+    
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Transactions')
+        pdf.to_excel(writer, index=False, sheet_name='Transactions')
     output.seek(0)
     return output

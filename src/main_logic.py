@@ -46,13 +46,14 @@ async def export_excel_cmd(update, context):
     user_id = update.effective_user.id
     db = SessionLocal()
     user = db.query(User).filter(User.telegram_id == user_id).first()
+    lang = user.language if user else 'en'
     df = get_report_data(user.id, days=365) # Export last year
     
     msg_obj = update.message if update.message else update.callback_query.message
     
     if not df.empty:
-        excel_file = export_to_excel(df)
+        excel_file = export_to_excel(df, lang)
         await msg_obj.reply_document(document=excel_file, filename=f"report_{user_id}.xlsx")
     else:
-        await msg_obj.reply_text("No data to export." if user.language == 'en' else "لا توجد بيانات للتصدير.")
+        await msg_obj.reply_text("No data to export." if lang == 'en' else "لا توجد بيانات للتصدير.")
     db.close()
