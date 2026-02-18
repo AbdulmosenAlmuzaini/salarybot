@@ -7,3 +7,4 @@ openpyxl
 matplotlib
 sqlalchemy-utils
 httpx
+psycopg2-binary
