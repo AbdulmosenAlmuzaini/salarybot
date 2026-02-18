@@ -1,0 +1,10 @@
+.env
+*.db
+__pycache__/
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+tests/
+verify_logic.py
+migrate_db.py

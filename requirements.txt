@@ -1,0 +1,9 @@
+python-telegram-bot
+groq
+sqlalchemy
+python-dotenv
+pandas
+openpyxl
+matplotlib
+sqlalchemy-utils
+httpx
