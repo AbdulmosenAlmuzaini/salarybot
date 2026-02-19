@@ -89,10 +89,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.refresh(user)
 
     if not user.is_active:
-        lang = user.language
-        await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
-        db.close()
-        return
+        # Auto-activate if this is the admin
+        if user_id == Config.ADMIN_ID:
+            user.is_active = True
+            db.commit()
+        else:
+            lang = user.language
+            await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
+            db.close()
+            return
 
     keyboard = [
         [
@@ -175,10 +180,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.refresh(user)
 
     if not user.is_active:
-        lang = user.language
-        await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
-        db.close()
-        return
+        # Auto-activate if this is the admin
+        if user_id == Config.ADMIN_ID:
+            user.is_active = True
+            db.commit()
+        else:
+            lang = user.language
+            await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
+            db.close()
+            return
 
     lang = user.language
     s = STRINGS[lang]
