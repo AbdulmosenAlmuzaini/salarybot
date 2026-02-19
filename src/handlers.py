@@ -76,7 +76,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if not user:
         # Automatic registration
-        is_active = (user_id == Config.ADMIN_ID)
+        is_active = True
         user = User(
             telegram_id=user_id, 
             username=username,
@@ -87,17 +87,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.add(user)
         db.commit()
         db.refresh(user)
-
-    if not user.is_active:
-        # Auto-activate if this is the admin
-        if user_id == Config.ADMIN_ID:
-            user.is_active = True
-            db.commit()
-        else:
-            lang = user.language
-            await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
-            db.close()
-            return
 
     keyboard = [
         [
@@ -173,22 +162,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             username=update.effective_user.username,
             full_name=update.effective_user.full_name,
             language='ar',
-            is_active=(user_id == Config.ADMIN_ID)
+            is_active=True
         )
         db.add(user)
         db.commit()
         db.refresh(user)
-
-    if not user.is_active:
-        # Auto-activate if this is the admin
-        if user_id == Config.ADMIN_ID:
-            user.is_active = True
-            db.commit()
-        else:
-            lang = user.language
-            await update.message.reply_text(STRINGS[lang]['pending'].format(user_id=user_id))
-            db.close()
-            return
 
     lang = user.language
     s = STRINGS[lang]

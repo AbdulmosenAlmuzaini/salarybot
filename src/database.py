@@ -15,7 +15,7 @@ class User(Base):
     full_name = Column(String(200), nullable=True)
     language = Column(String(2), default='ar')  # 'ar' or 'en'
     daily_limit = Column(Float, default=0.0)
-    is_active = Column(sa.Boolean, default=False)
+    is_active = Column(sa.Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     transactions = relationship("Transaction", back_populates="user")
